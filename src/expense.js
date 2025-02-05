@@ -4,7 +4,6 @@ const db = require("./db");
 const { nanoid } = require('nanoid')
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const { AccessValidation } = require('../../Sistem-Manajemen-Tugas/src/handler');
 
 const GenerateToken = (user) => {
     const token = jwt.sign({ id: user[0].id, username: user[0].username }, process.env.JWT_SECRET, { expiresIn: '1h' });
