@@ -4,10 +4,50 @@ const db = require("./db");
 const { nanoid } = require('nanoid')
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const { AccessValidation } = require('../../Sistem-Manajemen-Tugas/src/handler');
 
 const GenerateToken = (user) => {
     const token = jwt.sign({ id: user[0].id, username: user[0].username }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return token;
+};
+
+const AccessValidation = async(request, h) => {
+    const authorization = request.headers.authorization;
+
+    if(!authorization) {
+        const response = h.response({
+            status: 'fail',
+            message: 'unauthorized',
+        });
+        response.code(400);
+        return response.takeover();
+    };
+
+    const token = authorization.split(' ')[1];
+    const [isBlacklist] = await db.query(`SELECT * FROM blacklisttoken WHERE token = ?`, [token]);
+
+    if(isBlacklist.length > 0) {
+        const response = h.response({
+            status: 'fail',
+            message: 'unauthorized',
+        });
+        response.code(400);
+        return response.takeover();
+    };
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        request.auth({ credentials: decoded});
+        return h.continue;
+
+    } catch(error) {
+        const response = h.response({
+            status: 'fail',
+            messsage: 'Invalid access validation',
+        });
+        response.code(400);
+        return response.takeover();
+    };
 };
 
 const registerAccount = async(request, h) => {
@@ -475,4 +515,4 @@ const deleteExpense = async(request, h) => {
     };
 }
 
-module.exports = { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount }
+module.exports = { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount, AccessValidation }

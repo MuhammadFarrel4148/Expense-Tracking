@@ -1,4 +1,4 @@
-const { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount } = require("./expense");
+const { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount, AccessValidation } = require("./expense");
 
 const routes = [
     {
@@ -30,26 +30,41 @@ const routes = [
        method: 'POST',
        path: '/expense',
        handler: addExpense,
+       options: {
+        pre: [{ AccessValidation }]
+       }
     },
     {
         method: 'GET',
         path: '/expense',
         handler: getAllExpense,
+        options: {
+            pre: [{ AccessValidation }]
+        }
     },
     {
         method: 'GET',
         path: '/expense/summary',
         handler: summaryExpense,
+        options: {
+            pre: [{ AccessValidation }]
+        }
     },
     {
         method: 'PUT',
         path: '/expense/{id}',
-        handler: updateExpense
+        handler: updateExpense,
+        options: {
+            pre: [{ AccessValidation }]
+        }
     },
     {
         method: 'DELETE',
         path: '/expense/{id}',
         handler: deleteExpense,
+        options: {
+            pre: [{ AccessValidation }]
+        }
     },
 ];
 
