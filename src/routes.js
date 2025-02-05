@@ -31,7 +31,7 @@ const routes = [
        path: '/expense',
        handler: addExpense,
        options: {
-        pre: [{ AccessValidation }]
+        pre: [{ method: AccessValidation }]
        }
     },
     {
@@ -39,7 +39,7 @@ const routes = [
         path: '/expense',
         handler: getAllExpense,
         options: {
-            pre: [{ AccessValidation }]
+            pre: [{ method: AccessValidation }]
         }
     },
     {
@@ -47,7 +47,7 @@ const routes = [
         path: '/expense/summary',
         handler: summaryExpense,
         options: {
-            pre: [{ AccessValidation }]
+            pre: [{ method: AccessValidation }]
         }
     },
     {
@@ -55,7 +55,7 @@ const routes = [
         path: '/expense/{id}',
         handler: updateExpense,
         options: {
-            pre: [{ AccessValidation }]
+            pre: [{ method: AccessValidation }]
         }
     },
     {
@@ -63,7 +63,7 @@ const routes = [
         path: '/expense/{id}',
         handler: deleteExpense,
         options: {
-            pre: [{ AccessValidation }]
+            pre: [{ method: AccessValidation }]
         }
     },
 ];

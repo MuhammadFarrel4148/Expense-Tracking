@@ -77,7 +77,7 @@ const registerAccount = async(request, h) => {
                         id, username, email
                     }
                 })
-                response.code(200);
+                response.code(201);
                 return response;
             };
 
