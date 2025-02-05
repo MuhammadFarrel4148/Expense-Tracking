@@ -1,6 +1,31 @@
-const { addExpense, getAllExpense, summaryExpense, updateExpense } = require("./expense");
+const { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount } = require("./expense");
 
 const routes = [
+    {
+        method: 'POST',
+        path: '/register',
+        handler: registerAccount,
+    },
+    {
+        method: 'POST',
+        path: '/login',
+        handler: loginAccount,
+    },
+    {
+        method: 'POST',
+        path: '/forgotpassword',
+        handler: forgotPassword,
+    },
+    {
+        method: 'POST',
+        path: '/inputotp',
+        handler: inputOtp,
+    },
+    {
+        method: 'POST',
+        path: '/logout',
+        handler: logoutAccount,
+    },
     {
        method: 'POST',
        path: '/expense',
@@ -20,7 +45,12 @@ const routes = [
         method: 'PUT',
         path: '/expense/{id}',
         handler: updateExpense
-    }
+    },
+    {
+        method: 'DELETE',
+        path: '/expense/{id}',
+        handler: deleteExpense,
+    },
 ];
 
 module.exports = routes;   
