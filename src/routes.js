@@ -1,4 +1,4 @@
-const { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount, AccessValidation } = require("./expense");
+const { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount, AccessValidation, automationOTP } = require("./expense");
 
 const routes = [
     {
@@ -15,6 +15,11 @@ const routes = [
         method: 'POST',
         path: '/forgotpassword',
         handler: forgotPassword,
+    },
+    {
+        method: 'GET',
+        path: '/automation/{email}',
+        handler: automationOTP,
     },
     {
         method: 'POST',

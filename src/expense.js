@@ -36,13 +36,13 @@ const AccessValidation = async(request, h) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        request.auth({ credentials: decoded});
+        request.auth = { credentials: decoded};
         return h.continue;
 
     } catch(error) {
         const response = h.response({
             status: 'fail',
-            messsage: 'Invalid access validation',
+            message: 'Invalid access validation',
         });
         response.code(400);
         return response.takeover();
@@ -240,7 +240,6 @@ const logoutAccount = async(request, h) => {
 
         const token = authorization.split(' ')[1];
         const [isBlacklist] = await db.query(`SELECT * FROM blacklisttoken WHERE token = ?`, [token]);
-        console.log(isBlacklist)
 
         if(isBlacklist.length > 0) {
             const response = h.response ({
@@ -255,7 +254,7 @@ const logoutAccount = async(request, h) => {
         await db.query(`INSERT INTO blacklisttoken(token) VALUES(?)`, [token]);
 
         const response = h.response({
-            status: 'fail',
+            status: 'success',
             message: 'logout berhasil',
         });
         response.code(200);
@@ -273,6 +272,7 @@ const logoutAccount = async(request, h) => {
 
 const addExpense = async(request, h) => {
     const { deskripsi, nominal, date } = request.payload;
+    console.log(deskripsi, nominal, date)
 
     try {
         if(!deskripsi || !nominal || !date) {
@@ -512,6 +512,38 @@ const deleteExpense = async(request, h) => {
         response.code(400);
         return response;
     };
+};
+
+const automationOTP = async(request, h) => {
+    const { email } = request.params;
+
+    try {
+        const [result] = await db.query(`SELECT * FROM codeotp WHERE email = ?`, [email]);
+
+        if(result.length > 0) {
+            const response = h.response({
+                status: 'success',
+                codeOTP: result[0].code,
+            })
+            response.code(200);
+            return response;
+        };
+
+        const response = h.response({
+            status: 'fail',
+            message: 'tidak ditemukan code otp',
+        });
+        response.code(404);
+        return response;
+
+    } catch {
+        const response = h.response({
+            status: 'fail',
+            message: 'Invalid automation OTP',
+        });
+        response.code(400);
+        return response;
+    }
 }
 
-module.exports = { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount, AccessValidation }
+module.exports = { addExpense, getAllExpense, summaryExpense, updateExpense, deleteExpense, registerAccount, loginAccount, forgotPassword, inputOtp, logoutAccount, AccessValidation, automationOTP }
