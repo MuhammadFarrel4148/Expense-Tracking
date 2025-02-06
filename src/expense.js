@@ -270,9 +270,14 @@ const logoutAccount = async(request, h) => {
     };
 };
 
-const addExpense = async(request, h) => {
-    const { deskripsi, nominal, date } = request.payload;
-    console.log(deskripsi, nominal, date)
+const addExpense = async(request, h) => {   
+    const userId = request.auth.credentials.id;
+    const year = String(new Date().getFullYear());
+    const month = String(new Date().getMonth() + 1).padStart(2, '0');
+    const day = String(new Date().getDay()).padStart(2, '0');
+    const fulldate = `${year}-${month}-${day}`
+
+    const { deskripsi = "needs", nominal = "20000", date = fulldate } = request.payload || {};
 
     try {
         if(!deskripsi || !nominal || !date) {
@@ -288,20 +293,21 @@ const addExpense = async(request, h) => {
         const createdAt = new Date().toISOString();
         const updatedAt = createdAt;
     
-        const [expense] = await db.query(`INSERT INTO expense(id, deskripsi, nominal, date, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?, ?)`, [id, deskripsi, nominal, date, createdAt, updatedAt]);
+        const [result] = await db.query(`INSERT INTO expense(id, userId, deskripsi, nominal, date, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?, ?, ?)`, [id, userId, deskripsi, nominal, date, createdAt, updatedAt]);
 
-        if(expense.affectedRows === 1) {
+        if(result.affectedRows === 1) {
             const response = h.response({
                 status: 'success',
-                messsage: 'expense berhasil dibuat',
+                message: 'expense berhasil dibuat',
                 data: {
                     id: id,
+                    userId: userId,
                     deskripsi: deskripsi,
                     nominal: nominal,
                     date: date,
                 }
             });
-            response.code(200);
+            response.code(201);
             return response;
         };
 
@@ -311,7 +317,9 @@ const addExpense = async(request, h) => {
         });
         response.code(400);
         return response;
+
     } catch(error) {
+        console.log(error)
         const response = h.response({
             status: 'fail',
             message: 'Invalid add expense',
@@ -375,8 +383,10 @@ const getAllExpense = async(request, h) => {
 };
 
 const summaryExpense = async(request, h) => {
+    const userId = request.auth.credentials.id
+
     try{
-        const [ expenses ] = await db.query(`SELECT * FROM expense`);
+        const [ expenses ] = await db.query(`SELECT * FROM expense WHERE userId = ?`, [userId]);
 
         let no_eat = 0;
         let no_shopping = 0;
